@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Planner bíblico de leitura cronológica em 52 semanas, com progresso e resumos sincronizados.">
+<title>Planner Bíblico</title>
+<link rel="icon" type="image/png" href="Logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="spinner"></div>
+  <div class="loading-text">Carregando...</div>
+</div>
+
+<!-- AUTH -->
+<div id="auth-screen" hidden>
+
+  <!-- névoa de fundo -->
+  <div class="auth-mist">
+    <div class="mist-orb"></div>
+    <div class="mist-orb"></div>
+    <div class="mist-orb"></div>
+    <div class="mist-orb"></div>
+  </div>
+  <div class="auth-grid"></div>
+
+  <!-- lado esquerdo: hero -->
+  <div class="auth-hero">
+    <div class="auth-hero-badge">
+      <span>Leitura Cronológica · 1 ano</span>
+    </div>
+
+    <div class="auth-hero-logo-wrap" aria-hidden="true">
+      <img src="Logo.png" alt="" class="auth-hero-logo">
+    </div>
+
+    <h1 class="auth-hero-title">
+      Planner<br><span>Bíblico</span>
+    </h1>
+
+    <p class="auth-hero-sub">
+      Leia a Bíblia completa em ordem cronológica em 52 semanas.<br>
+      Marque seu progresso, registre seus resumos e cresça na Palavra.
+    </p>
+
+    <div class="auth-hero-stats">
+      <div class="auth-stat">
+        <div class="auth-stat-value">52</div>
+        <div class="auth-stat-label">Semanas</div>
+      </div>
+      <div class="auth-stat">
+        <div class="auth-stat-value" id="auth-total-days">364</div>
+        <div class="auth-stat-label">Dias de leitura</div>
+      </div>
+      <div class="auth-stat">
+        <div class="auth-stat-value">66</div>
+        <div class="auth-stat-label">Livros da Bíblia</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- divisor -->
+  <div class="auth-divider"></div>
+
+  <!-- lado direito: painel de login -->
+  <div class="auth-panel">
+    <div class="auth-panel-logo">
+      <div class="auth-panel-logo-icon"><img src="Logo.png" alt="Logo do Planner Bíblico"></div>
+      <div class="auth-panel-logo-text">PLANNER BÍBLICO</div>
+    </div>
+
+    <div class="auth-panel-heading">Bem-vindo</div>
+    <div class="auth-panel-desc">
+      Entre com sua conta Google para salvar seu progresso e acessar de qualquer dispositivo.
+    </div>
+
+    <div class="auth-sep">
+      <div class="auth-sep-line"></div>
+      <div class="auth-sep-text">Acesso seguro</div>
+      <div class="auth-sep-line"></div>
+    </div>
+
+    <button class="btn-google" id="btn-google" type="button">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+      <span>Continuar com Google</span>
+    </button>
+
+    <div class="auth-features">
+      <div class="auth-feature">
+        <i class="ti ti-cloud" aria-hidden="true"></i>
+        <span>Progresso salvo automaticamente na nuvem</span>
+      </div>
+      <div class="auth-feature">
+        <i class="ti ti-devices" aria-hidden="true"></i>
+        <span>Acesse de qualquer dispositivo</span>
+      </div>
+      <div class="auth-feature">
+        <i class="ti ti-lock" aria-hidden="true"></i>
+        <span>Dados privados e seguros por usuário</span>
+      </div>
+      <div class="auth-feature">
+        <i class="ti ti-pencil" aria-hidden="true"></i>
+        <span>Escreva e salve seus resumos de leitura</span>
+      </div>
+    </div>
+
+    <div class="auth-footer">
+      Ao entrar, você concorda com o uso dos seus dados<br>
+      exclusivamente para sincronização do planner.
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen" hidden>
+  <header>
+    <div class="header-left">
+      <div class="logo"><img src="Logo.png" alt="Logo do Planner Bíblico"></div>
+      <div>
+        <div class="header-title">Planner Bíblico</div>
+        <div class="header-sub" id="header-sub">Leitura cronológica</div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-label">
+          <span>Progresso geral</span>
+          <span id="pct-label">0%</span>
+        </div>
+        <div class="progress-bar" role="progressbar" aria-label="Progresso geral" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar-fill" id="global-bar"></div></div>
+      </div>
+
+      <div class="sync-status" id="sync-status" aria-live="polite">
+        <span class="sync-dot" aria-hidden="true"></span>
+        <span id="sync-label">Sincronizado</span>
+      </div>
+
+      <button class="btn-dark" id="btn-dark" type="button" aria-label="Alternar modo escuro">
+        <i class="ti ti-moon" aria-hidden="true" id="dark-icon"></i>
+        <span id="dark-label">Escuro</span>
+      </button>
+
+      <div class="user-menu-wrap">
+        <button class="user-avatar-button" id="user-avatar-wrap" type="button" aria-label="Abrir menu do usuário" aria-expanded="false"></button>
+        <div class="user-dropdown" id="user-dropdown">
+          <div class="user-dropdown-info">
+            <div class="user-dropdown-name" id="dd-name">—</div>
+            <div class="user-dropdown-email" id="dd-email">—</div>
+          </div>
+          <button class="user-dropdown-item danger" id="btn-signout" type="button">
+            <i class="ti ti-logout" aria-hidden="true"></i> Sair
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Dias concluídos</div>
+        <div class="stat-value green" id="stat-done">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Dias restantes</div>
+        <div class="stat-value accent" id="stat-left">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Semanas completas</div>
+        <div class="stat-value gold" id="stat-weeks">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Sequência atual</div>
+        <div class="stat-value" id="stat-streak">0 dias</div>
+      </div>
+    </div>
+
+    <div class="week-select-wrap">
+      <label for="week-sel">Semana:</label>
+      <select id="week-sel" aria-label="Selecionar semana"></select>
+      <div class="week-nav">
+        <button class="btn-nav" id="btn-prev" type="button"><i class="ti ti-chevron-left"></i> Anterior</button>
+        <button class="btn-nav" id="btn-next" type="button">Próxima <i class="ti ti-chevron-right"></i></button>
+      </div>
+    </div>
+
+    <div id="week-container"></div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Resumo</div>
+      <button class="modal-close" id="modal-close" type="button" aria-label="Fechar resumo"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="modal-close-footer" type="button">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Aplicação -->
+<script type="module" src="script.js"></script>
+</body>
+</html>
